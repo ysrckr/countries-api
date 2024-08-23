@@ -5,16 +5,17 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/ysrckr/countries-api/internals/server"
+	"github.com/ysrckr/countries-api/internals/conf"
 )
 
 func main() {
 
-	server := server.New()
+	config := conf.New()
+	fApp := config.Server.GetApp()
 
-	server.RegisterFiberRoutes()
+	config.Server.RegisterRoutes()
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
-	err := server.Listen(fmt.Sprintf(":%d", port))
+	err := fApp.Listen(fmt.Sprintf(":%d", port))
 	if err != nil {
 		panic(fmt.Sprintf("cannot start server: %s", err))
 	}

@@ -2,12 +2,15 @@ package server
 
 import (
 	"github.com/gofiber/fiber/v3"
-	"github.com/ysrckr/countries-api/internals/db"
 )
+
+type Server interface {
+	RegisterRoutes()
+	GetApp() *fiber.App
+}
 
 type FiberServer struct {
 	*fiber.App
-	db db.Service
 }
 
 func New() *FiberServer {
@@ -16,9 +19,11 @@ func New() *FiberServer {
 			ServerHeader: "test",
 			AppName:      "test",
 		}),
-
-		db: db.New(),
 	}
 
 	return server
+}
+
+func (s *FiberServer) GetApp() *fiber.App {
+	return s.App
 }
