@@ -1,12 +1,14 @@
 package server
 
 import (
+	"fmt"
+
 	"github.com/gofiber/fiber/v3"
 )
 
 type Server interface {
 	RegisterRoutes()
-	GetApp() *fiber.App
+	StartServer(int) error
 }
 
 type FiberServer struct {
@@ -16,14 +18,18 @@ type FiberServer struct {
 func New() *FiberServer {
 	server := &FiberServer{
 		App: fiber.New(fiber.Config{
-			ServerHeader: "test",
-			AppName:      "test",
+			ServerHeader: "countries_api",
+			AppName:      "Countries Api",
 		}),
 	}
 
 	return server
 }
 
-func (s *FiberServer) GetApp() *fiber.App {
-	return s.App
+func (s *FiberServer) StartServer(port int) error {
+	if err := s.App.Listen(fmt.Sprintf(":%d", port)); err != nil {
+		return err
+	}
+
+	return nil
 }

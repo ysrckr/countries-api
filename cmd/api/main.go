@@ -11,11 +11,13 @@ import (
 func main() {
 
 	config := conf.New()
-	fApp := config.Server.GetApp()
 
 	config.Server.RegisterRoutes()
-	port, _ := strconv.Atoi(os.Getenv("PORT"))
-	err := fApp.Listen(fmt.Sprintf(":%d", port))
+	port, err := strconv.Atoi(os.Getenv("PORT"))
+	if err != nil {
+		port = 8000
+	}
+	err = config.Server.StartServer(port)
 	if err != nil {
 		panic(fmt.Sprintf("cannot start server: %s", err))
 	}
