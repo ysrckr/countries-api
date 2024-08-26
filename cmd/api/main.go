@@ -1,15 +1,27 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 
 	"github.com/ysrckr/countries-api/internals/conf"
 )
 
-func main() {
+var env string
 
+func init() {
+
+	flag.StringVar(&env, "env-file", ".env", "Set env-file path")
+	flag.StringVar(&env, "e", ".env", "Set env-file path")
+	flag.Parse()
+
+}
+
+func main() {
+	log.Println(env)
 	config := conf.New()
 
 	config.Server.RegisterRoutes()
