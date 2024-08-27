@@ -28,3 +28,10 @@ tmp/
 bin/
 cmd/tmp/
 cmd/bin/
+
+.env*
+.env.*
+.flaskenv*
+!.env.project
+!.env.vault
+!.env.example

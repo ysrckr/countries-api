@@ -3,34 +3,29 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
-	"os"
 	"strconv"
 
+	"github.com/gofiber/fiber/v3/log"
 	"github.com/ysrckr/countries-api/internals/conf"
 )
 
-var env string
+var mode string
 
 func init() {
-
-	flag.StringVar(&env, "env-file", ".env", "Set env-file path")
-	flag.StringVar(&env, "e", ".env", "Set env-file path")
+	flag.StringVar(&mode, "mode", "development", "Set env-file path")
 	flag.Parse()
-
 }
 
 func main() {
-	log.Println(env)
-	config := conf.New()
+	config := conf.New(mode)
 
 	config.Server.RegisterRoutes()
-	port, err := strconv.Atoi(os.Getenv("PORT"))
+	port, err := strconv.Atoi(config.Envs["PORT"])
 	if err != nil {
-		port = 8000
+		log.Fatalf("error: %w", err)
 	}
 	err = config.Server.StartServer(port)
 	if err != nil {
-		panic(fmt.Sprintf("cannot start server: %s", err))
+		panic(fmt.Sprintf("cannot start server: %w", err))
 	}
 }
