@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/gofiber/fiber/v3"
@@ -8,7 +9,7 @@ import (
 
 type Server interface {
 	RegisterRoutes()
-	StartServer(int) error
+	StartServer(context.Context, chan<- error, int)
 	ShutDown() error
 }
 
@@ -27,15 +28,15 @@ func New() *FiberServer {
 	return server
 }
 
-func (s *FiberServer) StartServer(port int) error {
+func (s *FiberServer) StartServer(ctx context.Context, errChan chan<- error, port int) {
 	if err := s.App.Listen(fmt.Sprintf(":%d", port), fiber.ListenConfig{
 		EnablePrefork:         true,
 		DisableStartupMessage: false,
 	}); err != nil {
-		return err
+		errChan <- err
 	}
 
-	return nil
+	defer close(errChan)
 }
 
 func (s *FiberServer) ShutDown() error {

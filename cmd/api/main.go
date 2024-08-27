@@ -1,11 +1,14 @@
 package main
 
 import (
+	"context"
 	"flag"
-	"fmt"
+	"log"
+	"os"
+	"os/signal"
 	"strconv"
+	"syscall"
 
-	"github.com/gofiber/fiber/v3/log"
 	"github.com/ysrckr/countries-api/internals/conf"
 )
 
@@ -24,8 +27,22 @@ func main() {
 	if err != nil {
 		log.Fatalf("error: %w", err)
 	}
-	err = config.Server.StartServer(port)
-	if err != nil {
-		panic(fmt.Sprintf("cannot start server: %w", err))
+
+	shutDownChan := make(chan error, 1)
+	shutdownCtx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+	go config.Server.StartServer(shutdownCtx, shutDownChan, port)
+
+	select {
+	case err := <-shutDownChan:
+		log.Fatalf("error starting the server. error is %w", err)
+
+	case <-shutdownCtx.Done():
+		log.Println("Shutting down server...")
+
+		if err := config.Server.ShutDown(); err != nil {
+			log.Fatalf("Server Shutdown Failed:%+v", err)
+		}
+
 	}
 }
