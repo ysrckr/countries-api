@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/ysrckr/countries-api/internals/conf"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -21,7 +20,7 @@ var (
 type Service interface {
 	Health() map[string]string
 	Close(context.Context) error
-	QueryAll(string) *mongo.Cursor
+	QueryAll(context.Context, string) (*mongo.Cursor, error)
 }
 
 type service struct {
@@ -62,16 +61,4 @@ func (s *service) Close(ctx context.Context) error {
 	}
 
 	return nil
-}
-
-func (s *service) QueryAll(collection string) *mongo.Cursor {
-	timeout, cancel := context.WithTimeout(context.Background(), time.Second*3)
-	defer cancel()
-	coll := s.db.Database(s.dbName).Collection(collection)
-	cursor, err := coll.Find(timeout, bson.D{})
-	if err != nil {
-		log.Println(err)
-	}
-
-	return cursor
 }

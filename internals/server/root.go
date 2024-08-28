@@ -1,9 +1,9 @@
 package server
 
-import "github.com/ysrckr/countries-api/internals/server/handlers"
+import "github.com/gofiber/fiber/v3"
 
-func (s *FiberServer) RootRoutes() {
-	root := s.V1Routes()
+func (s *FiberServer) RootRoutes() fiber.Router {
+	root := s.V1Routes().Group("/")
 
-	root.Get("/", handlers.HelloWorldHandler)
+	return root
 }

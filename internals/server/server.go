@@ -19,7 +19,7 @@ type FiberServer struct {
 	*fiber.App
 }
 
-func New() *FiberServer {
+func New() Server {
 	server := &FiberServer{
 		App: fiber.New(fiber.Config{
 			ServerHeader: "countries_api",
