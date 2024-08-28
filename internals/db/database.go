@@ -21,7 +21,7 @@ var (
 type Service interface {
 	Health() map[string]string
 	Close(context.Context) error
-	QueryAll(string)
+	QueryAll(string) *mongo.Cursor
 }
 
 type service struct {
@@ -64,14 +64,14 @@ func (s *service) Close(ctx context.Context) error {
 	return nil
 }
 
-func (s *service) QueryAll(collection string) {
+func (s *service) QueryAll(collection string) *mongo.Cursor {
 	timeout, cancel := context.WithTimeout(context.Background(), time.Second*3)
 	defer cancel()
 	coll := s.db.Database(s.dbName).Collection(collection)
-	cursor, err := coll.Find(timeout, bson.D{{}})
+	cursor, err := coll.Find(timeout, bson.D{})
 	if err != nil {
 		log.Println(err)
 	}
 
-	log.Println(cursor)
+	return cursor
 }
