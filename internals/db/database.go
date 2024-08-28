@@ -42,7 +42,7 @@ func New(username, password, host, port, dbName string) Service {
 }
 
 func (s *service) Health() map[string]string {
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	err := s.db.Ping(ctx, nil)

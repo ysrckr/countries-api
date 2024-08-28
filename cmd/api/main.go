@@ -15,13 +15,9 @@ import (
 	"github.com/ysrckr/countries-api/internals/server"
 )
 
-var (
-	seed bool
-	mode string
-)
+var seed bool
 
 func init() {
-	flag.StringVar(&mode, "mode", "development", "Set enviroment mode")
 	flag.BoolVar(&seed, "seed", false, "Initilize DB seeding before the server starts")
 	flag.Parse()
 }

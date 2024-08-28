@@ -1,14 +1,22 @@
 package conf
 
 import (
+	"flag"
 	"log"
 
 	"github.com/joho/godotenv"
 )
 
-var mode = "development"
+var (
+	mode   = "development"
+	Config *Configuration
+)
 
-var Config = New(mode)
+func init() {
+	flag.StringVar(&mode, "mode", "development", "Set enviroment mode")
+	flag.Parse()
+	Config = New(mode)
+}
 
 type Enviroment map[string]string
 
