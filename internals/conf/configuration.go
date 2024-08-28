@@ -4,25 +4,22 @@ import (
 	"log"
 
 	"github.com/joho/godotenv"
-	"github.com/ysrckr/countries-api/internals/db"
-	"github.com/ysrckr/countries-api/internals/server"
 )
+
+var mode = "development"
+
+var Config = New(mode)
 
 type Enviroment map[string]string
 
 type Configuration struct {
 	Envs    Enviroment
-	Server  server.Server
-	DB      db.Service
 	mode    string
 	envFile string
 }
 
 func New(mode string) *Configuration {
 	config := &Configuration{}
-
-	config.DB = db.New()
-	config.Server = server.New()
 	config.Envs = map[string]string{}
 	config.mode = mode
 	config.envFile = ".env"

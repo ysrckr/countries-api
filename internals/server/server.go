@@ -7,6 +7,8 @@ import (
 	"github.com/gofiber/fiber/v3"
 )
 
+var Srv = New()
+
 type Server interface {
 	RegisterRoutes()
 	StartServer(context.Context, chan<- error, int)
