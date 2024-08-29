@@ -1,0 +1,18 @@
+services:
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: yasar
+      MONGO_INITDB_ROOT_PASSWORD: qwerty1989
+      MONGO_INITDB_DATABASE: countries-api
+    ports:
+      - 27017:27017
+    volumes:
+      - mongoDB:/data/db
+
+
+volumes:
+  mongoDB:
+    name: mongoDB
