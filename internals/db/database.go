@@ -20,7 +20,7 @@ var (
 type Service interface {
 	Health() map[string]string
 	Close(context.Context) error
-	QueryAll(context.Context, string) (*mongo.Cursor, error)
+	QueryAll(context.Context, string, interface{}, *options.FindOptions) (*mongo.Cursor, error)
 }
 
 type service struct {

@@ -1,0 +1,16 @@
+meta {
+  name: Get All Countries with Queries
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{url}}/countries?fields=cca2,cca3&languages=tur
+  body: none
+  auth: none
+}
+
+params:query {
+  fields: cca2,cca3
+  languages: tur
+}
