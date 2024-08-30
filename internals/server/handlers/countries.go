@@ -40,24 +40,15 @@ func GetCountriesHandler(c fiber.Ctx) error {
 func withQueries(c fiber.Ctx, queries map[string]string) error {
 	countries := []models.QueryCountry{}
 	var fields []string
-	var languages []string
 	optionsList := bson.D{bson.E{Key: "name.common", Value: 1}}
 
 	fieldsQuery := queries["fields"]
 	if fieldsQuery != "" {
 		fields = strings.Split(fieldsQuery, ",")
 	}
-	languagesQuery := queries["languages"]
-	if languagesQuery != "" {
-		languages = strings.Split(languagesQuery, ",")
-	}
 
 	for _, field := range fields {
 		optionsList = append(optionsList, bson.E{Key: field, Value: 1})
-	}
-
-	for _, language := range languages {
-		optionsList = append(optionsList, bson.E{Key: "translations." + language + ".common", Value: 1})
 	}
 
 	opts := options.Find().SetProjection(optionsList)
