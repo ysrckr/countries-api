@@ -1,23 +1,21 @@
 package handlers
 
 import (
-	"strings"
-
 	"github.com/gofiber/fiber/v3"
 	"github.com/ysrckr/countries-api/internals/db"
 	"github.com/ysrckr/countries-api/internals/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"strings"
 )
 
 func GetCountriesHandler(c fiber.Ctx) error {
 
+	countries := []models.Country{}
 	queries, ok := getQueries(c)
 	if ok {
-		return withQueries(c, queries)
+		return withQueries(c, queries, &countries)
 	}
-
-	countries := []models.Country{}
 
 	cursor, err := db.DB.QueryAll(c.Context(), "countries", bson.D{}, nil)
 	if err != nil {
@@ -37,8 +35,7 @@ func GetCountriesHandler(c fiber.Ctx) error {
 	return c.JSON(countries)
 }
 
-func withQueries(c fiber.Ctx, queries map[string]string) error {
-	countries := []models.QueryCountry{}
+func withQueries(c fiber.Ctx, queries map[string]string, countries *[]models.Country) error {
 	var fields []string
 	optionsList := bson.D{bson.E{Key: "name.common", Value: 1}}
 
@@ -62,13 +59,13 @@ func withQueries(c fiber.Ctx, queries map[string]string) error {
 
 	defer cursor.Close(c.Context())
 
-	if err = cursor.All(c.Context(), &countries); err != nil {
+	if err = cursor.All(c.Context(), countries); err != nil {
 		return c.JSON(fiber.Map{
 			"message": err,
 		})
 	}
 
-	return c.JSON(countries)
+	return c.JSON(*countries)
 }
 
 func getQueries(c fiber.Ctx) (map[string]string, bool) {

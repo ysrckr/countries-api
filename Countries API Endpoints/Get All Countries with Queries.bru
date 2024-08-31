@@ -5,12 +5,11 @@ meta {
 }
 
 get {
-  url: {{url}}/countries?fields=cca2,cca3,translation&languages=tur
+  url: {{url}}/countries?fields=cca2,languages
   body: none
   auth: none
 }
 
 params:query {
-  fields: cca2,cca3,translation
-  languages: tur
+  fields: cca2,languages
 }
