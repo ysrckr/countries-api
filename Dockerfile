@@ -38,5 +38,5 @@ USER appuser:appuser
 ENTRYPOINT ["/app"]
 
 LABEL Name=countries-api Version=0.0.1
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD "curl --fail http://localhost:8080 || exit 1"
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD "curl --fail http://localhost:8000 || exit 1"
 EXPOSE 8000
