@@ -1,0 +1,46 @@
+stages:
+- build
+- publish
+
+variables:
+  GIT_SSL_NO_VERIFY: '1'
+  REGISTRY: $CI_REGISTRY
+  GROUP: $CI_PROJECT_NAMESPACE
+  REPO: $CI_PROJECT_NAME
+  REGISTRY_STRING: $REGISTRY/$GROUP/$REPO
+  TAG: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
+  APP: api
+  API_IMAGE: $REGISTRY_STRING/$APP
+  PLATFORMS: linux/amd64
+
+build:
+  image: docker:latest
+  stage: build
+  only:
+  - main
+
+  services:
+  - docker:dind
+  before_script:
+  - export CR_PAT=$CI_REGISTRY_PASSWORD
+  - echo $CR_PAT | docker login -u $CI_REGISTRY_USER $REGISTRY --password-stdin
+  script:
+  - docker buildx create --use --bootstrap --name mybuilder
+  - docker buildx build --provenance=false --platform $PLATFORMS -t $API_IMAGE:$TAG --push -f Dockerfile .
+
+publish:
+  image: node:18
+  stage: publish
+  only:
+  - main
+  variables:
+    SERVICE: countries_api
+  services:
+  - docker:dind
+  before_script:
+  - apt-get update -y && apt-get install sshpass
+  script:
+  - sshpass -p "$DEPLOYMENT_SERVER_PASS" ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no $DEPLOYMENT_SERVER_USER@$DEPLOYMENT_SERVER_IP "echo $DEPLOYMENT_SERVER_PASS | docker login $REGISTRY -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD"
+  - sshpass -p $DEPLOYMENT_SERVER_PASS ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no $DEPLOYMENT_SERVER_USER@$DEPLOYMENT_SERVER_IP "docker service update --image $API_IMAGE:$TAG --with-registry-auth $SERVICE"
+
+
