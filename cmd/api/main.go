@@ -35,7 +35,7 @@ func main() {
 
 	shutDownChan := make(chan error, 1)
 
-	shutdownCtx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	shutdownCtx, stop := signal.NotifyContext(context.Background(), syscall.SIGTERM)
 	defer stop()
 
 	go server.Srv.StartServer(shutdownCtx, shutDownChan, port)
