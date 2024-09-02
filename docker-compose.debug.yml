@@ -3,10 +3,17 @@ services:
   countries-api:
     hostname: countries-api
     image: ysrckr/countries-api
+    environment:
+      - MODE=${MODE}
+    command: ['--mode', '${MODE}']
+    env_file:
+      - .env.${MODE}
     ports:
       - 8000:8000
     networks:
       - mongo-net
+    volumes:
+      - ${PWD}/.env.${MODE}:/.env.${MODE}
 
   mongodb:
     hostname: mongo

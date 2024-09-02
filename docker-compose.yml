@@ -1,11 +1,26 @@
+name: countries-api-debug
 services:
   countries-api:
     hostname: countries-api
-    image: countriesapi
-    build:
-      context: .
-      dockerfile: ./Dockerfile
+    image: ysrckr/countries-api
+    environment:
+      - MODE=${MODE}
+    command: ['--mode', '${MODE}']
     env_file:
-      - .env.production
-    ports:
-      - 8000:8000
+      - .env.${MODE}
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+      update_config:
+        parallelism: 1
+        delay: 10s
+    networks:
+      - api_network
+    volumes:
+      - ${PWD}/.env.${MODE}:/.env.${MODE}
+
+networks:
+  api_network:
+    external: true
