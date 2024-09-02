@@ -1,0 +1,28 @@
+name: countries-api-debug
+services:
+  countries-api:
+    hostname: countries-api
+    image: ysrckr/countries-api
+    ports:
+      - 8000:8000
+    networks:
+      - mongo-net
+
+  mongodb:
+    hostname: mongo
+    image: mongo
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    volumes:
+      - mongoDB:/data/db
+    networks:
+      - mongo-net
+
+networks:
+  mongo-net:
+
+volumes:
+  mongoDB:
+    name: mongoDB
+    external: true

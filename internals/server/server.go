@@ -32,7 +32,7 @@ func New() Server {
 
 func (s *FiberServer) StartServer(ctx context.Context, errChan chan<- error, port int) {
 	if err := s.App.Listen(fmt.Sprintf(":%d", port), fiber.ListenConfig{
-		EnablePrefork:         true,
+		EnablePrefork:         false,
 		DisableStartupMessage: false,
 	}); err != nil {
 		errChan <- err

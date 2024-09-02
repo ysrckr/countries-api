@@ -40,7 +40,7 @@ func New(mode string) *Configuration {
 	}
 
 	if err := config.setEnvs(); err != nil {
-		log.Fatalf("cannot load %s file, got an error of %w", config.envFile, err)
+		log.Fatalf("cannot load %s file, got an error of %v", config.envFile, err)
 	}
 
 	return config
