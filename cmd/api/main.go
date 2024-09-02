@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"log"
+	"os"
 	"os/signal"
 	"strconv"
 	"syscall"
@@ -35,7 +36,7 @@ func main() {
 
 	shutDownChan := make(chan error, 1)
 
-	shutdownCtx, stop := signal.NotifyContext(context.Background(), syscall.SIGTERM)
+	shutdownCtx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
 	go server.Srv.StartServer(shutdownCtx, shutDownChan, port)
