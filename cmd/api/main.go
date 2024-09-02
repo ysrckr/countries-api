@@ -4,7 +4,6 @@ import (
 	"context"
 	"flag"
 	"log"
-	"os"
 	"os/signal"
 	"strconv"
 	"syscall"
@@ -31,19 +30,19 @@ func main() {
 	server.Srv.RegisterRoutes()
 	port, err := strconv.Atoi(config.Envs["PORT"])
 	if err != nil {
-		log.Fatalf("error: %w", err)
+		log.Fatalf("error: %v", err)
 	}
 
 	shutDownChan := make(chan error, 1)
 
-	shutdownCtx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+	shutdownCtx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
 	go server.Srv.StartServer(shutdownCtx, shutDownChan, port)
 
 	select {
 	case err := <-shutDownChan:
-		log.Fatalf("error starting the server. error is %w", err)
+		log.Fatalf("error starting the server. error is %v", err)
 
 	case <-shutdownCtx.Done():
 		if !fiber.IsChild() {
@@ -52,7 +51,7 @@ func main() {
 		}
 
 		if err = db.DB.Close(shutdownCtx); err != nil {
-			log.Fatalln("DB Shutdown Failed:%+v", err)
+			log.Fatalf("DB Shutdown Failed:%+v", err)
 		}
 
 		if err := server.Srv.ShutDown(); err != nil {
