@@ -1,4 +1,3 @@
-name: countries-api-debug
 services:
   countries-api:
     hostname: countries-api
