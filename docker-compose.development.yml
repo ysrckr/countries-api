@@ -1,0 +1,12 @@
+name: countries
+services:
+  countries-api:
+    hostname: countries-api
+    image: registrygit.mirsis.com.tr/is-cozumleri/countries/api:main-9b153857
+    command: ['--mode', '${MODE:-development}']
+    env_file:
+      - .env.${MODE:-development}
+    ports:
+      - 8000:8000
+    volumes:
+      - ${PWD}/.env.${MODE:-development}:/.env.${MODE:-development}
